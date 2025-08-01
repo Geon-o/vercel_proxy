@@ -1,29 +1,26 @@
+const normalizeId = (id) => {
+  if (!id || id.includes('-')) return id;
+  if (id.length !== 32) return id;
+  return `${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20, 32)}`;
+};
 
-import { Client } from "@notionhq/client";
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
+module.exports = async (req, res) => {
+  const { NotionAPI } = await import('notion-client');
+  const { pageId } = req.query;
 
-export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (!pageId) {
+    return res.status(400).json({ error: 'pageId is required' });
+  }
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+  const notion = new NotionAPI({
+    authToken: process.env.NOTION_TOKEN_V2,
+  });
 
-    const { pageId } = req.query
-
-    if (!pageId) {
-        return res.status(400).json({ error: 'Missing pageId' })
-    }
-
-    try {
-        const page = await notion.pages.retrieve({ page_id: pageId })
-        const blocks = await notion.blocks.children.list({ block_id: pageId })
-
-        return res.status(200).json({ page, blocks })
-    } catch (err) {
-        console.error('Notion API Error:', err)
-        return res.status(500).json({ error: 'Failed to fetch Notion page' })
-    }
-}
+  try {
+    const formattedPageId = normalizeId(pageId);
+    const recordMap = await notion.getPage(formattedPageId);
+    res.status(200).json(recordMap);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch Notion page', details: error.message });
+  }
+};
