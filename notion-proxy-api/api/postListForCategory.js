@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     }
 
     const token = process.env.NOTION_TOKEN;
-    const { databaseId } = req.body;
+    const { databaseId, category } = req.body;
 
     if (!databaseId) {
         return res.status(400).json({ error: 'Missing database_id' });
@@ -18,7 +18,12 @@ export default async function handler(req, res) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            page_size: 10,
+            filter: {
+                property: 'category',
+                multi_select: {
+                    contains: category
+                }
+            }
         })
     });
 
