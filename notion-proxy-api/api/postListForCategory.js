@@ -4,7 +4,8 @@ export default async function handler(req, res) {
     }
 
     const token = process.env.NOTION_TOKEN;
-    const { databaseId, category } = req.body;
+    const databaseId = process.env.POST_LIST_FOR_CATEGORY_DATABASE_ID;
+    const { category } = req.body;
 
     if (!databaseId) {
         return res.status(400).json({ error: 'Missing database_id' });
