@@ -16,10 +16,7 @@ export default async function handler(req, res) {
             'Authorization': `Bearer ${token}`,
             'Notion-Version': '2022-06-28',
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            page_size: 10,
-        })
+        }
     });
 
     const data = await notionRes.json();
