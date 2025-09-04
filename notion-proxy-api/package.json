@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "@notionhq/client": "^4.0.1",
+    "@tryfabric/martian": "^1.2.4",
     "notion-client": "^7.4.3"
   }
 }

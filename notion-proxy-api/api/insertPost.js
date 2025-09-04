@@ -51,18 +51,6 @@ export default async function handler(req, res) {
         },
         tag: {
             multi_select: tags
-        },
-        imageUrl: {
-            rich_text: [
-                {
-                    text: {
-                        content: postData.imageUrl,
-                        link: {
-                            url: postData.imageUrl
-                        }
-                    }
-                }
-            ]
         }
     }
 
